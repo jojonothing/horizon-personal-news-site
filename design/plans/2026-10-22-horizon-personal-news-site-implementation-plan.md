@@ -14,7 +14,7 @@
 
 - The site, RSS feed, generated posts, and Pages output are public.
 - `data/config.github.json` generates Chinese posts only with `ai.languages` set to `["zh"]`.
-- Use public tech/AI sources; set `webhook.enabled` to `false`, remove finance and the `LWN_KEY`-based RSS feed, and remove the Telegram source configuration.
+- Use public tech/AI sources; set `webhook.enabled` and `sources.telegram.enabled` to `false`, remove finance and the `LWN_KEY`-based RSS feed, and clear the unrelated Telegram channels.
 - Keep Horizon's `tech-news` and `tech-blog` Profiles; remove the unused finance Profile from the active configuration.
 - Keep the DeepSeek provider configured in the current sample; the `DEEPSEEK_API_KEY` value must be entered as a GitHub Actions Secret, never committed or printed.
 - Manual validation exposes an `hours` input defaulting to 24. After the user approves launch, scheduled runs use a 24-hour fetch window at 23:00 UTC (07:00 Asia/Shanghai).
@@ -51,7 +51,7 @@ Set `ai.languages` to `["zh"]`. Keep `tech-news` as the default Profile and keep
 
 - [ ] **Step 2: Keep only the approved public tech/AI source examples**
 
-Keep the existing GitHub activity/release sources for Karpathy, vLLM, SGLang, and Triton; keep Hacker News and the `MachineLearning` / `LocalLLaMA` Reddit sources; keep the RSS sources Simon Willison, vLLM Blog, Sean Goedecke, GitHub Trending, and SemiAnalysis. Remove the CNBC Finance feed, the LWN feed containing `${LWN_KEY}`, and the entire `sources.telegram` section.
+Keep the existing GitHub activity/release sources for Karpathy, vLLM, SGLang, and Triton; keep Hacker News and the `MachineLearning` / `LocalLLaMA` Reddit sources; keep the RSS sources Simon Willison, vLLM Blog, Sean Goedecke, GitHub Trending, and SemiAnalysis. Remove the CNBC Finance feed and the LWN feed containing `${LWN_KEY}`. Keep `sources.telegram` with `enabled: false` and an empty `channels` list; omitting this field restores Horizon's model default `enabled: true`.
 
 - [ ] **Step 3: Validate JSON syntax and configuration invariants**
 
@@ -68,7 +68,8 @@ assert config["ai"]["languages"] == ["zh"]
 assert config["webhook"]["enabled"] is False
 assert "finance-news" not in config["processing"]["profile_settings"]
 assert "finance-news" not in config["digest"]["profile_order"]
-assert "telegram" not in config["sources"]
+assert config["sources"]["telegram"]["enabled"] is False
+assert config["sources"]["telegram"]["channels"] == []
 rss_names = {source["name"] for source in config["sources"]["rss"]}
 assert rss_names == {
     "Simon Willison", "vLLM Blog", "Sean Goedecke",
@@ -78,7 +79,7 @@ assert all("${" not in source["url"] for source in config["sources"]["rss"])
 PY
 ```
 
-Expected: both commands exit successfully; the five intended public RSS feeds are the only RSS feeds, and no source-specific secret placeholder remains.
+Expected: both commands exit successfully; the five intended public RSS feeds are the only RSS feeds, Telegram is explicitly disabled with no channels, and no source-specific secret placeholder remains.
 
 - [ ] **Step 4: Load the config through Horizon's schema and run focused tests**
 
