@@ -374,3 +374,32 @@ Run `Deploy Docs` from `main` and wait for success. In Settings → Pages, choos
 - [ ] **Step 4: Verify the public site and feed**
 
 Open the Pages URL and verify the home page, a generated issue, the dated archive, and `https://jojonothing.github.io/horizon-personal-news-site/feed-zh.xml`. Confirm the workflow remains available for manual catch-up runs and is scheduled for 23:00 UTC.
+
+### Task 6: Align issue dates with the Shanghai calendar before launch
+
+Complete this prerequisite before executing Task 5. Task 5 remains gated on the user's launch approval.
+
+**Files:**
+- Modify: `src/orchestrator.py`
+- Modify: `tests/test_orchestrator_date.py` (or the repository's established focused test module)
+- Modify: `.github/workflows/daily-summary.yml`
+
+**Interfaces:**
+- Consumes: optional `HORIZON_TIMEZONE`; defaults to UTC for existing deployments.
+- Produces: report, saved-summary, and Jekyll post dates in the configured timezone; fetch lookback windows remain UTC.
+
+- [ ] **Step 1: Add a regression test for the UTC/Shanghai date boundary**
+
+At `2026-10-21 23:00 UTC`, assert the issue date is `2026-10-22` when `HORIZON_TIMEZONE=Asia/Shanghai`. Assert an unset timezone retains the existing UTC date `2026-10-21`.
+
+- [ ] **Step 2: Use the configured timezone only for issue dates**
+
+Read `HORIZON_TIMEZONE` when deriving the issue date. Leave source-fetch windows and all lookback calculations in UTC.
+
+- [ ] **Step 3: Configure the GitHub Actions generation step for Shanghai**
+
+Set `HORIZON_TIMEZONE: Asia/Shanghai` in the `Run Horizon` environment. Keep the workflow manual-only and keep Pages disabled; this task does not authorize launch.
+
+- [ ] **Step 4: Verify focused and full tests**
+
+Run the regression test, then `uv run pytest -q`; confirm the workflow still has only `workflow_dispatch` and `git diff --check` passes.
