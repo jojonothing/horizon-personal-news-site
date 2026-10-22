@@ -1,6 +1,6 @@
 # Horizon 个人 AI 新闻日报站设计
 
-状态：待用户审阅<br>
+状态：已确认，进入实施计划<br>
 日期：2026-10-22
 
 ## 目标
@@ -17,7 +17,7 @@
 
 ## 已确认的设计选择
 
-- **项目基础**：在用户的 GitHub 账号下新建 Horizon fork。当前本地副本位于 `/Users/wenxiongzhou/Dev/horizon-personal-news-site`，从 Horizon `main` 分支克隆；建议仓库名为 `horizon-personal-news-site`。GitHub 账号和远程仓库尚未创建。
+- **项目基础**：在当前登录的 GitHub 账号 `jojonothing` 下新建 Horizon fork。当前本地副本位于 `/Users/wenxiongzhou/Dev/horizon-personal-news-site`，从 Horizon `main` 分支克隆；仓库名为 `horizon-personal-news-site`，预期 Pages 地址为 `https://jojonothing.github.io/horizon-personal-news-site`。远程仓库尚未创建。
 - **生成与发布**：保留 Horizon 的 Python 流水线、Jekyll 页面和 GitHub Pages 发布方式，不重写前端，也不增加服务端。
 - **语言与内容**：首版中文为主，使用公开科技/AI 信息源，以 `tech-news` Profile 作为起点。当前 `data/config.github.json` 有 4 个 GitHub 源和 7 个 RSS 源；实施时会从公开示例中筛选适合个人日报的内容，并将语言配置调整为中文。
 - **阅读体验**：将首页改成个人品牌入口，突出最新一期，提供近期日报归档、原文链接和 RSS。保留 Horizon 生成的 Markdown 正文，不在首版重做内容模板。
@@ -45,7 +45,7 @@ GitHub Actions 定时触发或手动触发
 
 ## 自动运行和发布
 
-- 启用当前禁用的 `.github/workflows/daily-summary.yml.disabled` 模板，保留定时与 `workflow_dispatch` 手动触发能力；手动触发增加 `hours` 输入，默认 24 小时，必要时可扩大回看范围补跑。
+- 启用当前禁用的 `.github/workflows/daily-summary.yml.disabled` 模板，手动验证阶段只开放 `workflow_dispatch`，增加 `hours` 输入并默认回看 24 小时；最终确认后再启用每日定时触发，避免验证期间产生计划外的模型调用。
 - 初始默认按北京时间每天 07:00 运行（GitHub Actions 的 cron 使用 UTC，对应前一日 23:00 UTC）；定时注释应与实际 cron 保持一致。Actions 可能延迟启动，手动触发用于补跑。
 - 日报工作流和文档发布工作流都会更新 `gh-pages`。实施时要确认两者不会互相覆盖已生成的历史日报，并在需要时串行化 Pages 发布。
 - 先通过手动工作流完成端到端验证，再依赖定时运行。
@@ -77,4 +77,4 @@ GitHub Actions 定时触发或手动触发
 2. 定制 `data/config.github.json`、`tech-news` Profile、`docs/_config.yml`、`docs/index.md` 和站点样式。
 3. 配置 Actions Secrets，启用并校准日报工作流，处理两个 Pages 发布工作流之间的历史内容保留与并发。
 4. 手动运行并验证日报、站点和 RSS。
-5. 确认正常后启用每日定时运行。
+5. 手动验证完成后请用户审阅生成内容；确认后启用 GitHub Pages 和每日定时运行。
