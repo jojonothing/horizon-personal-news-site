@@ -291,11 +291,12 @@ git commit -m "ci: 启用个人日报手动验证工作流"
 Run:
 
 ```bash
-uv sync --extra dev --locked
+uv sync --extra dev
+git diff --exit-code -- uv.lock
 uv run pytest -q
 ```
 
-Expected: the full existing Horizon suite passes and the lock file stays unchanged.
+Expected: the full existing Horizon suite passes and `uv.lock` remains unchanged. The local `uv` available in the implementation environment is version `0.2.21`, which does not support `uv sync --locked`; inspect and revert any lock-only rewrite before continuing because this plan does not change project dependencies.
 
 - [ ] **Step 2: Create the public fork and connect the local branch**
 
