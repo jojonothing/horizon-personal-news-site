@@ -6,6 +6,10 @@ on:
     paths: ['docs/**', 'skills/horizon/**', 'LICENSE', '.github/workflows/deploy-docs.yml']
   workflow_dispatch:
 
+concurrency:
+  group: horizon-pages
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
