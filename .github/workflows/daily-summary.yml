@@ -1,6 +1,8 @@
 name: Daily Horizon Summary
 
 on:
+  schedule:
+    - cron: "0 23 * * *" # 每天上海时间 07:00
   workflow_dispatch:
     inputs:
       hours:
@@ -55,7 +57,7 @@ jobs:
           uv run horizon --hours "$hours"
 
       - name: Set current date as environment variable
-        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+        run: echo "DATE=$(TZ=Asia/Shanghai date +'%Y-%m-%d')" >> "$GITHUB_ENV"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
